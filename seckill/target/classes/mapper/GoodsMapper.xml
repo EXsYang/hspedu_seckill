@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--namespace指定要关联的接口的全类名-->
+<mapper namespace="com.hspedu.seckill.mapper.GoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hspedu.seckill.pojo.Goods">
+        <id column="id" property="id" />
+        <result column="goods_name" property="goodsName" />
+        <result column="goods_title" property="goodsTitle" />
+        <result column="goods_img" property="goodsImg" />
+        <result column="goods_detail" property="goodsDetail" />
+        <result column="goods_price" property="goodsPrice" />
+        <result column="goods_stock" property="goodsStock" />
+    </resultMap>
+
+    <!--返回秒杀商品列表/信息-->
+    <select id="findGoodsVo" resultType="com.hspedu.seckill.vo.GoodsVo">
+        SELECT
+            g.id, g.goods_name,
+            g.goods_title,
+            g.goods_img,
+            g.goods_detail,
+            g.goods_price,
+            g.goods_stock,
+            sg.seckill_price,
+            sg.stock_count,
+            sg.start_date,
+            sg.end_date
+            FROM
+            t_goods g LEFT JOIN t_seckill_goods AS sg -- 左外连接，左侧的表完全显示
+            ON g.id = sg.goods_id -- ON 后面写条件，相当于where
+    </select>
+
+    <!--获取指定商品详情-根据id-->
+    <select id="findGoodsVoByGoodsId" resultType="com.hspedu.seckill.vo.GoodsVo">
+
+          SELECT
+            g.id, g.goods_name,
+            g.goods_title,
+            g.goods_img,
+            g.goods_detail,
+            g.goods_price,
+            g.goods_stock,
+            sg.seckill_price,
+            sg.stock_count,
+            sg.start_date,
+            sg.end_date
+            FROM
+            t_goods g LEFT JOIN t_seckill_goods AS sg -- 左外连接，左侧的表完全显示
+            ON g.id = sg.goods_id -- ON 后面写条件，相当于where
+            WHERE g.id = #{goodsId}
+    </select>
+
+</mapper>

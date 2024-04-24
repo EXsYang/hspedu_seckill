@@ -1,0 +1,59 @@
+spring:
+  thymeleaf:
+    #关闭缓存
+    cache: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/seckill?useUnicode=true&characterEncoding=utf-8&useSSL=true
+    username: root
+    password: hsp
+    # 数据库连接池
+    hikari:
+      #连接池名
+      pool-name: Hsp_Hikari_Poll
+      #最小空闲连接
+      minimum-idle: 5
+      #空闲连接存活最大时间，默认 60000(10 分钟)
+      idle-timeout: 60000
+      # 最大连接数，默认是 10
+      maximum-pool-size: 10
+      #从连接池返回来的连接自动提交
+      auto-commit: true
+      #连接最大存活时间。0 表示永久存活，默认 180000（30 分钟）
+      max-lifetime: 180000
+      #连接超时时间，默认 30000（30 秒）
+      connection-timeout: 30000
+      #测试连接是否可用的查询语句
+      connection-test-query: select 1
+
+  #配置Redis
+  redis:
+    host: 192.168.198.135
+    port: 6379
+    database: 0
+    timeout: 10000ms
+    lettuce:
+      pool:
+        #最大连接数 默认是8 CPU内核*2 即可
+        max-active: 8
+        #最大的连接等待时间 默认是-1即一直等待
+        max-wait: 10000ms
+        #最大空闲连接数  默认是8
+        max-idle: 200
+        #最小空闲连接数  默认是0
+        min-idle: 5
+
+
+
+
+
+#mybatis-plus 配置
+mybatis-plus:
+  #配置 mapper.xml 映射文件
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  #配置 mybatis 数据返回类型别名
+  type-aliases-package: com.hspedu.seckill.pojo
+#mybatis sql 打印
+logging:
+  level:
+    com.hspedu.seckill.mapper: debug

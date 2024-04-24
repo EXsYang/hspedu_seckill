@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--namespace指定要关联的接口的全类名-->
+<mapper namespace="com.hspedu.seckill.mapper.SeckillGoodsMapper">
+
+    <!-- 通用查询映射结果 后面可能会使用到，先准备好，这里是一个常规的操作-->
+    <resultMap id="BaseResultMap" type="com.hspedu.seckill.pojo.SeckillGoods">
+        <id column="id" property="id" />
+        <result column="goods_id" property="goodsId" />
+        <result column="seckill_price" property="seckillPrice" />
+        <result column="stock_count" property="stockCount" />
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+    </resultMap>
+
+
+</mapper>
