@@ -34,7 +34,7 @@ public class RedisConfig {
         //注入连接工厂
         redisTemplate.setConnectionFactory(redisConnectionFactory);
 
-        System.out.println("注入的redisTemplate的hashCode=" + redisTemplate.hashCode());
+        // System.out.println("注入的redisTemplate的hashCode=" + redisTemplate.hashCode());
         return redisTemplate;
     }
 }

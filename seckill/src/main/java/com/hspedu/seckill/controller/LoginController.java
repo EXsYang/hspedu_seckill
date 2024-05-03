@@ -46,6 +46,8 @@ public class LoginController {
      * 为 @RestController（等同于在每个方法上使用 @Controller 和 @ResponseBody）。
      *
      * 经由 http://localhost:8080/login/toLogin 所在的html页面中的 ajax请求 转发到该控制器方法
+     *
+     * /login/doLogin
      * @param loginVo
      * @param request
      * @param response
@@ -60,7 +62,7 @@ public class LoginController {
                             HttpServletRequest request,
                             HttpServletResponse response) {
 
-        log.info("{}", loginVo);
+        // log.info("{}", loginVo);
 
         return userService.doLogin(loginVo,request,response); //默认请求转发到templates/login.html
     }

@@ -6,7 +6,7 @@
 <mapper namespace="com.hspedu.seckill.mapper.UserMapper">
 
 
-    <!-- 通用查询映射结果 -->
+    <!-- 通用查询映射结果 后面可能会使用到，先准备好，这里是一个常规的操作-->
     <resultMap id="BaseResultMap" type="com.hspedu.seckill.pojo.User">
         <id column="id" property="id"/>
         <result column="nickname" property="nickname"/>

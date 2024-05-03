@@ -5,7 +5,7 @@
 <!--namespace指定要关联的接口的全类名-->
 <mapper namespace="com.hspedu.seckill.mapper.GoodsMapper">
 
-    <!-- 通用查询映射结果 -->
+    <!-- 通用查询映射结果 后面可能会使用到，先准备好，这里是一个常规的操作-->
     <resultMap id="BaseResultMap" type="com.hspedu.seckill.pojo.Goods">
         <id column="id" property="id" />
         <result column="goods_name" property="goodsName" />

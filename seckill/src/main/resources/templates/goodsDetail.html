@@ -158,11 +158,20 @@
                     <span th:if="${secKillStatus eq 2}">秒杀已结束</span>
                 </td>
                 <td>
-                    <form id="secKillForm" method="post" action="/seckill/doSeckill">
-                        <input type="hidden" id="goodsId" name="goodsId" th:value="${goods.id}">
-                        <button class="btn btn-primary btn-block" type="submit" id="buyButton"> 抢 购
-                        </button>
-                    </form>
+                    <!--<form id="secKillForm" method="post" action="/seckill/doSeckill">-->
+                    <!--    <input type="hidden" id="goodsId" name="goodsId" th:value="${goods.id}">-->
+                    <!--    <button class="btn btn-primary btn-block" type="submit" id="buyButton"> 抢 购-->
+                    <!--    </button>-->
+                    <!--</form>-->
+
+                    <!-- 对应秒杀 v6.0 后台 隐藏秒杀接口-->
+                    <input type="hidden" id="goodsId" name="goodsId" th:value="${goods.id}">
+                    <button class="btn btn-primary btn-block" type="submit" onclick="getSecKillPath()"
+                            id="buyButton">
+                        立即秒杀
+                    </button>
+                </td>
+
                 </td>
             </tr>
             <tr>
@@ -216,6 +225,7 @@
                 //将剩余时间减1
                 $("#countDown").text(remainSeconds - 1); //这里是用于页面展示的剩余时间
                 $("#remainSeconds").val(remainSeconds - 1); //这里是用于当作判断条件的剩余时间的值, 即 if (remainSeconds > 0) {
+                //调用下面的方法
                 countDown();
             }, 1000);
         } else if (remainSeconds == 0) {//秒杀进行中
@@ -230,5 +240,121 @@
             $("#seckillTip").html("秒杀已结束");
         }
     }
+
+
+    //通过隐藏秒杀接口的方式,秒杀商品
+    function getSecKillPath() {
+
+        var goodsId = $("#goodsId").val();
+        $.ajax({
+            url: "/seckill/path", type: "GET", data: {
+                goodsId: goodsId,
+            }, success: function (data) {
+                if (data.code == 200) {
+                    //取出服务器返回的随机生成的路径
+                    var path = data.obj;
+                    //真正的秒杀方法
+                    doSecKill(path);
+                } else {
+                    layer.msg(data.message);
+                }
+            }, error: function () {
+                layer.msg("客户端请求错误");
+            }
+        })
+    }
+
+    //携带秒杀生成的路径, 秒杀商品
+    function doSecKill(path) {
+        $.ajax({
+            //一定要注意路径的大小写问题,否则报 404
+            url: '/seckill/' + path + '/doSeckill',
+            type: 'POST',
+            data: {
+                goodsId: $("#goodsId").val()
+            }, success: function (data) {
+
+                //测试轮询，到时候打开下面的代码，用户进行秒杀后，客户端就进行轮询查询结果
+                getSeckillResult();
+
+                if (data.code == 200) {
+                    layer.msg("秒杀结果" + data.message);
+                } else {
+                    layer.msg(data.message);
+                }
+            }, error: function () {
+                layer.msg("客户端请求错误！", {time: 2000});
+            }
+        });
+    }
+
+
+    //轮询调用，获取秒杀结果
+    function getSeckillResult() {
+
+        // 定时器/计时器
+        var timeout;
+        var maxPollingAttempts = 30; // 最大轮询次数，根据需要调整
+        var pollingInterval = 500; // 轮询间隔，根据需要调整
+        var currentAttempt = 0; //跟踪当前的轮询次数。
+        //通过这种方法，你可以有效地防止因为后端状态不变或网络问题导致的前端轮询死循环。
+        // 同时，这个方案也会在超出最大轮询次数时停止，避免浪费服务器资源和网络带宽。
+
+        // 定义轮询函数
+        function polling() {
+
+            //当轮询次数大于设置的最大轮询次数后停止轮询
+            if (currentAttempt >= maxPollingAttempts) {
+                layer.msg("轮询超时，请稍后尝试刷新页面或联系客服。");
+                console.log("轮询超时，请稍后尝试刷新页面或联系客服。");
+                return; // 停止轮询
+            }
+
+
+            $.ajax({
+                url: '/seckill/seckillResult',
+                type: 'POST',
+                data: {
+                    goodsId: $("#goodsId").val()
+                },
+                success: function(data) {
+                    // 处理后端返回的秒杀结果
+                    if (data.obj > 0) {
+                        layer.msg("秒杀成功，订单号为【" + data.obj + "】");
+                        console.log("秒杀成功，订单号为【" + data.obj + "】")
+                    } else if (data.obj == 0) {
+                        layer.msg("秒杀排队中...");
+                        // 继续轮询调用
+                        //只有在后端返回的秒杀状态为排队中时，才会继续进行轮询调用。
+                        // 如果秒杀状态表示成功、失败或其他异常情况，就不会再次发起轮询请求，
+                        // 而是根据具体情况在前端做出相应的处理。
+                        console.log("秒杀排队中...")
+
+                        currentAttempt++;//增加当前轮询尝试次数
+                        timeout = setTimeout(polling, 100);
+                    } else if (data.obj == -1) {
+                        layer.msg("秒杀失败...");
+                        console.log("秒杀失败...")
+                    } else {
+                        layer.msg("系统异常");
+                        console.log("系统异常")
+                    }
+                },
+                error: function() {
+                    layer.msg("客户端请求错误！", {time: 2000});
+                    currentAttempt++;
+                    if (currentAttempt < maxPollingAttempts) {
+                        timeout = setTimeout(polling, pollingInterval);
+                    }
+                }
+            });
+        }
+
+        // 第一次调用轮询函数，开始轮询
+        polling();
+    }
+
+
+
 </script>
 </html>

@@ -47,7 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     /**
      * 用户登录校验
-     *
+     * /login/doLogin
      * @param loginVo
      * @param request
      * @param response
@@ -74,7 +74,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         //查询DB，看看用户是否存在
         User user = userMapper.selectById(mobile);
-        System.out.println("DB根据手机号mobile取回来的user->" + user);
+        // System.out.println("DB根据手机号mobile取回来的user->" + user);
         if (null == user) { //说明用户不存在
             //方式1: 在这里可以直接返回一个RespBean对象, 然后经由控制层再返回给前端
             // return RespBean.error(RespBeanEnum.LOGIN_ERROR);
@@ -107,7 +107,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // request.getSession().setAttribute(ticket,user);
 
         //为了实现分布式Session，把登录用户存放到Redis
-        System.out.println("使用的redisTemplate的hashCode=" + redisTemplate.hashCode());
+        // System.out.println("使用的redisTemplate的hashCode=" + redisTemplate.hashCode());
 
 
         // 定义一个带有类型参数的 RedisTemplate 实例，确保类型安全
@@ -127,7 +127,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //将登录成功用户的票据 ticket 保存到cookie
         CookieUtil.setCookie(request, response, "userTicket", ticket);
 
-        return RespBean.success();
+        return RespBean.success(ticket);
     }
 
     /**
@@ -162,6 +162,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         return user;
 
+    }
+
+    //更新用户的密码
+    @Override
+    public RespBean updatePassword(String userTicket,
+                                   String password,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response) {
+
+        User user = getUserByCookie(userTicket, request, response);
+        if (user == null){
+            //该用户不存在,抛出异常
+            throw new GlobalException(RespBeanEnum.MOBILE_NOT_ERROR);
+        }
+
+        //设置新密码
+        user.setPassword(MD5Util.inputPassToDBPass(password,user.getSalt()));
+
+        int i = userMapper.updateById(user);
+        if (i == 1){ //更新成功
+            //删除该用户在redis中的数据/对象
+            redisTemplate.delete("user:" + userTicket);
+            return RespBean.success();
+        }
+
+        //密码更新失败
+        return RespBean.error(RespBeanEnum.PASSWORD_UPDATE_FAIL);
     }
 
 

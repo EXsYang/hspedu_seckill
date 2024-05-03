@@ -24,16 +24,25 @@ public class MD5UtilTest {
         //3. 也就是说, 我们发送给服务其后端的密码是先经过加密,
         //   再通过网络发给服务器的, 并不是发送的用户原生密码
         String midPass = MD5Util.inputPassToMidPass("12345");
-        System.out.println("midPass->" + midPass);
+        // System.out.println("midPass->" + midPass);
 
         //中间密码midPass-> "f56a952e4bd462be0c2dc29565d90ee7" 的对应的DB的密码
         //这里对中间密码进行加密加盐时，这个salt可能不一样
-        String dbPass = MD5Util.midPassToDBPass(midPass, "CTwI7GPP");
-        System.out.println("dbPass->" + dbPass);
+        String dbPass = MD5Util.midPassToDBPass(midPass, "3cj5PnMw");
+        // System.out.println("dbPass->" + dbPass);
 
         //密码明文 "12345" -> 得到DB中的密码
-        String inputPassToDBPass = MD5Util.inputPassToDBPass("12345", "CTwI7GPP");
-        System.out.println("inputPassToDBPass->" + inputPassToDBPass);
+        // String inputPassToDBPass = MD5Util.inputPassToDBPass("12345", "3cj5tnMw");
+
+        //null和"null" MD5加密后结果相同
+        String inputPassToDBPass = MD5Util.inputPassToDBPass(null, "3cj5tnMw");
+        String inputPassToDBPass2 = MD5Util.inputPassToDBPass("null", "3cj5tnMw");
+        // String inputPassToDBPass = MD5Util.inputPassToDBPass("", "3cj5tnMw");
+        System.out.println("null inputPassToDBPass->" + inputPassToDBPass);
+        // null inputPassToDBPass->a3ded5f466549dcbda570c4d1026b242
+        System.out.println("null inputPassToDBPass2->" + inputPassToDBPass2);
+        // null inputPassToDBPass2->a3ded5f466549dcbda570c4d1026b242
+
 
     }
 

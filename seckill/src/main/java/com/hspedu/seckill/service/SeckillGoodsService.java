@@ -10,4 +10,5 @@ import com.hspedu.seckill.pojo.SeckillGoods;
  * @description:
  */
 public interface SeckillGoodsService extends IService<SeckillGoods> {
+
 }

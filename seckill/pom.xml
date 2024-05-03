@@ -104,6 +104,18 @@
         <!--    <artifactId>spring-session-data-redis</artifactId>-->
         <!--</dependency>-->
 
+        <!-- 引入rabbitMQ 需要的amqp依赖,使用版本仲裁 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- 引入hutool依赖-有JSONUtil -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.3.3</version>
+        </dependency>
 
 
     </dependencies>
