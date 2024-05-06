@@ -117,6 +117,12 @@
             <version>5.3.3</version>
         </dependency>
 
+        <!--引入happy-Captcha依赖,即生成验证码的依赖-->
+        <dependency>
+            <groupId>com.ramostear</groupId>
+            <artifactId>Happy-Captcha</artifactId>
+            <version>1.0.1</version>
+        </dependency>
 
     </dependencies>
 

@@ -33,7 +33,10 @@ public enum RespBeanEnum {
     REPEAT_ERROR(500501,"该商品每人限购一件"),//重复错误
     REQUEST_ILLEGAL(500502,"请求非法"),
     SESSION_ERROR(500503,"用户信息有误"),
-    SEC_KILL_WAIT(500504,"排队中...");
+    SEC_KILL_WAIT(500504,"排队中..."),
+    CAPTCHA_ERROR(500505,"验证码错误..."),
+    ACCESS_LIMIT_REACHED(500506,"访问频繁,请待会再试2..."),
+    SEC_KILL_RETRY(500507,"本次抢购失败,请继续抢购...");
 
 
 

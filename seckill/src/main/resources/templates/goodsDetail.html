@@ -76,7 +76,12 @@
         }
 
         .captchaImg {
+            /*
+            指定了验证码图片（<img> 标签）默认是不显示的（display: none;）。
+            这意味着在页面初始加载时，验证码图像是隐藏的，不会显示给用户看。
+            */
             display: none;
+
             width: 130px;
 
             height: 32px;
@@ -178,8 +183,10 @@
                 <td>秒杀价</td>
                 <td id="secKillPrice" th:text="${goods.seckillPrice}"></td>
                 <td>
+                    <!--显示验证码-->
                     <img id="captchaImg" class="captchaImg"/></td>
                 <td>
+                    <!--输入框,可以输入验证码-->
                     <input id="captcha" class="captchaImg"/>
                     <input type="button" id="captchabtn" onclick="verifyCaptcha()" value="验证输入的验证码是否正确">
                 </td>
@@ -235,6 +242,30 @@
                 clearTimeout(timeout);
             }
             $("#seckillTip").html("秒杀进行中");
+
+            //在秒杀进行中的状态下, 请求验证码,并显示(默认情况下该验证码图片是不显示的,
+            // 因为使用类选择器.captchaImg设置了css样式 display: none;)
+            // '/seckill/captcha' 是生成验证码的接口
+            //在HTML中，当你为<img>标签设置src属性后，
+            // 浏览器会 自动 向该src属性所指向的URL发送HTTP请求以获取图像数据。
+
+            // 这个机制是浏览器内建的，用于加载并显示图像资源。
+            // 这种自动请求的特性使得在需要时动态改变<img>的src属性成为了
+            // 一种常见且有效的方式来更新页面上的图像。例如，在验证码的场景中，
+            // 每次用户需要新的验证码时，后端可以生成新图像，
+            // 而前端仅需更新<img>标签的src属性来重新触发请求，
+            // 从而获取并显示新的验证码图像。
+            $("#captchaImg").attr("src", "/seckill/captcha?goodsId=" + $("#goodsId").val());
+
+            // 是的，$("#captchaImg").show(); 这行代码的作用是将前面设置为不显示（display: none;）
+            // 的验证码图片显示出来。这行代码是通过 jQuery 框架执行的
+            // .show() 方法是 jQuery 提供的一个函数，
+            // 用来将选定元素的 CSS display 属性从 none 改为 block（或其他适当的显示属性），
+            // 使元素可见。
+            $("#captchaImg").show();
+            //显示输入框
+            $("#captcha").show();
+
         } else {
             $("#buyButton").attr("disabled", true); //抢购的按钮设置为不可用
             $("#seckillTip").html("秒杀已结束");
@@ -244,11 +275,18 @@
 
     //通过隐藏秒杀接口的方式,秒杀商品
     function getSecKillPath() {
-
         var goodsId = $("#goodsId").val();
+        //获取用户输入的验证码
+        var captcha = $("#captcha").val();
+
         $.ajax({
-            url: "/seckill/path", type: "GET", data: {
+            url: "/seckill/path",
+            type: "GET",
+            // type: "POST",
+            // captcha: captcha 中的第一个 captcha 需要和后端方法形参位置要封装的参数名对应才可以封装成功
+            data: {
                 goodsId: goodsId,
+                captcha: captcha,
             }, success: function (data) {
                 if (data.code == 200) {
                     //取出服务器返回的随机生成的路径
@@ -317,7 +355,7 @@
                 data: {
                     goodsId: $("#goodsId").val()
                 },
-                success: function(data) {
+                success: function (data) {
                     // 处理后端返回的秒杀结果
                     if (data.obj > 0) {
                         layer.msg("秒杀成功，订单号为【" + data.obj + "】");
@@ -340,7 +378,7 @@
                         console.log("系统异常")
                     }
                 },
-                error: function() {
+                error: function () {
                     layer.msg("客户端请求错误！", {time: 2000});
                     currentAttempt++;
                     if (currentAttempt < maxPollingAttempts) {
@@ -353,7 +391,6 @@
         // 第一次调用轮询函数，开始轮询
         polling();
     }
-
 
 
 </script>

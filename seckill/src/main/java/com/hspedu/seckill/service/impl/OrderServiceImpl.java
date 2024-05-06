@@ -122,7 +122,7 @@ public class OrderServiceImpl
         // boolean updateResult = seckillGoodsService.updateById(seckillGoods);
 
 
-        System.out.println("hello~~ 当前请求进入到真正的秒杀方法执行update操作");
+        System.out.println("hello~~ 当前请求进入到真正的秒杀方法执行update操作  userId=" + user.getId());
 
         //直接使用Mysql UPDATE更新语句保证原子性
         /**
@@ -212,7 +212,6 @@ public class OrderServiceImpl
         // }
 
 
-
         //生成普通订单
         // Order order = new Order();
         order = new Order();
@@ -231,7 +230,6 @@ public class OrderServiceImpl
 
         //保存order
         orderMapper.insert(order); // 插入普通订单
-
 
 
         //orderMapper.insert(order);  // 插入普通订单
@@ -328,8 +326,32 @@ public class OrderServiceImpl
 
         //从Redis取出该用户秒杀该商品的路径
         //存入生成的path时 key的设计=>  seckillPath:userId:goodsId
-        String redisPath = (String)redisTemplate.opsForValue().get("seckillPath:" + user.getId() + ":" + goodsId);
+        String redisPath = (String) redisTemplate.opsForValue().get("seckillPath:" + user.getId() + ":" + goodsId);
 
         return path.equals(redisPath);
+    }
+
+    //方法: 验证用户输入的验证码是否正确
+
+    /**
+     * @param user
+     * @param goodsId
+     * @param captcha 用户输入的验证码
+     * @return
+     */
+    @Override
+    public boolean checkCaptcha(User user, Long goodsId, String captcha) {
+
+        //常规非空校验
+        if (user == null || goodsId < 0 || !StringUtils.hasText(captcha)) {
+            return false;
+        }
+
+        //从Redis中取出验证码
+        String redisCaptcha = (String) redisTemplate.opsForValue().get("captcha:" + user.getId() + ":" + goodsId);
+        System.out.println("redisCaptcha=>" + redisCaptcha);
+        //如果redis中的验证码超时,则这里返回的redisCaptcha为null
+        //redisCaptcha=>null
+        return captcha.equals(redisCaptcha);
     }
 }

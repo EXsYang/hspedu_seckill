@@ -2,8 +2,10 @@ package com.hspedu.seckill.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -37,4 +39,21 @@ public class RedisConfig {
         // System.out.println("注入的redisTemplate的hashCode=" + redisTemplate.hashCode());
         return redisTemplate;
     }
+
+
+    //增加执行脚本 package org.springframework.data.redis.core.script DefaultRedisScript;
+    @Bean
+    public DefaultRedisScript<Long> script(){
+
+        DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
+        //设置要执行的lua脚本的位置, 一定要保证把lock.lua文件放在resources目录下
+        redisScript.setLocation(new ClassPathResource("lock.lua"));
+        redisScript.setResultType(Long.class);
+
+        return redisScript;
+    }
+
+
+
+
 }

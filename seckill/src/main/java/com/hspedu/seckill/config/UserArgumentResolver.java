@@ -79,21 +79,24 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer
             mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
             throws Exception {
-        HttpServletRequest request =
-                webRequest.getNativeRequest(HttpServletRequest.class);
-        HttpServletResponse response =
-                webRequest.getNativeResponse(HttpServletResponse.class);
+        // HttpServletRequest request =
+        //         webRequest.getNativeRequest(HttpServletRequest.class);
+        // HttpServletResponse response =
+        //         webRequest.getNativeResponse(HttpServletResponse.class);
+        //
+        // String ticket = CookieUtil.getCookieValue(request, "userTicket");
+        // if (!StringUtils.hasText(ticket)) {
+        //     return null;
+        // }
+        // //根据 cookie-ticket 到 Redis 获取 User用户信息
+        // User user = userService.getUserByCookie(ticket, request, response);
+        //
+        // //这里返回，相当于直接返回到/封装到了Controller层的控制器方法形参位置上了，
+        // //即如果Controller层的方法 如果使用到参数类型为User.class类型的参数，会直接
+        // //被封装为从Redis中根据cookie等获取到的具体的user对象的信息
+        // return user;
 
-        String ticket = CookieUtil.getCookieValue(request, "userTicket");
-        if (!StringUtils.hasText(ticket)) {
-            return null;
-        }
-        //根据 cookie-ticket 到 Redis 获取 User用户信息
-        User user = userService.getUserByCookie(ticket, request, response);
 
-        //这里返回，相当于直接返回到/封装到了Controller层的控制器方法形参位置上了，
-        //即如果Controller层的方法 如果使用到参数类型为User.class类型的参数，会直接
-        //被封装为从Redis中根据cookie等获取到的具体的user对象的信息
-        return user;
+        return UserContext.getUser();
     }
 }
