@@ -281,8 +281,8 @@
 
         $.ajax({
             url: "/seckill/path",
-            type: "GET",
-            // type: "POST",
+            // type: "GET",
+            type: "POST",
             // captcha: captcha 中的第一个 captcha 需要和后端方法形参位置要封装的参数名对应才可以封装成功
             data: {
                 goodsId: goodsId,
@@ -296,8 +296,12 @@
                 } else {
                     layer.msg(data.message);
                 }
-            }, error: function () {
-                layer.msg("客户端请求错误");
+            }, error: function (jqXHR, textStatus, errorThrown) {
+                console.error("AJAX 请求失败！");
+                console.error("状态文本: " + textStatus);
+                console.error("错误抛出: " + errorThrown);
+                console.error("响应文本: " + jqXHR.responseText);
+                layer.msg("/seckill/path 客户端请求错误");
             }
         })
     }
@@ -306,7 +310,13 @@
     function doSecKill(path) {
         $.ajax({
             //一定要注意路径的大小写问题,否则报 404
-            url: '/seckill/' + path + '/doSeckill',
+            //这里是保证每个用户的秒杀路径都不同，使用下面这个url时
+            // ，后端相应的在SeckillController 中的doSeckill 路径变量的接口/方法要打开
+            // url: '/seckill/' + path + '/doSeckill',
+
+            //注意这里使用的测试路径不同，测试的是后端SeckillController
+            // 中的普通的doSeckill接口/方法
+            url: '/seckill/doSeckill',
             type: 'POST',
             data: {
                 goodsId: $("#goodsId").val()
@@ -321,7 +331,7 @@
                     layer.msg(data.message);
                 }
             }, error: function () {
-                layer.msg("客户端请求错误！", {time: 2000});
+                layer.msg("'/seckill/' + path + '/doSeckill' 客户端请求错误！", {time: 2000});
             }
         });
     }
