@@ -310,8 +310,13 @@
     function doSecKill(path) {
         $.ajax({
             //一定要注意路径的大小写问题,否则报 404
-            // url: '/seckill/' + path + '/doSeckill',
-            url: '/seckill/doSeckill',
+            //这里是保证每个用户的秒杀路径都不同，使用下面这个url时
+            // ，后端相应的在SeckillController 中的doSeckill 路径变量的接口/方法要打开
+            url: '/seckill/' + path + '/doSeckill',
+
+            //注意这里使用的测试路径不同，测试的是后端SeckillController
+            // 中的普通的doSeckill接口/方法
+            // url: '/seckill/doSeckill',
             type: 'POST',
             data: {
                 goodsId: $("#goodsId").val()
