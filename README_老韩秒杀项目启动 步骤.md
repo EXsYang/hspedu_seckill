@@ -120,11 +120,13 @@ mybatis-plus:
 
 # 1 创建并连接本地数据库 这里使用的是mysql8
 
+## 1.1 先要保证本地mysql8服务正在运行
+
+![image-20240522121314909](https://raw.githubusercontent.com/EXsYang/PicGo-images-hosting/main/images/image-20240522121314909.png)
 
 
 
-
-## 1.1 检查windows主机本地使用的MySQL版本
+## 1.2 检查windows主机本地使用的MySQL版本
 
 
 
