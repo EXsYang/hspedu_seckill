@@ -31,6 +31,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!--引入mysql依赖
+            mysql-connector-java 的依赖包是设计为兼容多个 MySQL 版本的，
+            包括 MySQL 5.7 和 MySQL 8.0。该驱动程序使用了 JDBC API，
+            可以与多个 MySQL 版本进行交互，
+            只要这些版本支持所使用的 JDBC 版本和 SQL 语法。-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

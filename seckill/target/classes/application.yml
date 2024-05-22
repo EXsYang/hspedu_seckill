@@ -6,7 +6,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/seckill?useUnicode=true&characterEncoding=utf-8&useSSL=true
     username: root
-    password: hsp
+    #本地windows主机mysql5.7的mysql密码是hsp
+    #password: hsp
+    #本地windows主机mysql8的mysql密码是1234
+    password: 1234
     # 数据库连接池
     hikari:
       #连接池名
